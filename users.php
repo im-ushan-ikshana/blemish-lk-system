@@ -233,7 +233,7 @@ include('includes/navbar.php');
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="submit" name="save_supp_data" class="btn btn-primary">Add Supplier</button>
+                    <button type="submit" name="save_supp_data" class="btn btn-primary">Add user</button>
                 </div>
             </form>
         </div>
