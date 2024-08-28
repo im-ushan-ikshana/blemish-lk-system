@@ -89,46 +89,115 @@ if (isset($_POST['click_edit_btn'])) {
 
 //update data start
 if (isset($_POST['update_data'])) {
-    $productid = $_POST['productid'];
-    $productname = $_POST['productname'];
-    $productdes = $_POST['productdes'];
-    $categoryid = $_POST['categoryid'];
-    $sellprice = $_POST['sellprice'];
+    // Get form data
+    $product_id = $_POST['productid'];
+    $product_name = $_POST['productname'];
+    $product_des = $_POST['productdes'];
+    $category_id = $_POST['categoryid']; // Category dropdown value
+    $sell_price = $_POST['sellprice'];
 
-    $update_query = "UPDATE product SET product_name='$productname', product_des='$productdes', categories_id='$categoryid', sellPrice='$sellprice' WHERE product_id='$productid'";
-    $update_query_run = mysqli_query($con, $update_query);
+    // Check if the selected category exists in the categories table
+    $category_check_query = "SELECT * FROM categories WHERE categories_id = '$category_id'";
+    $category_check_result = mysqli_query($con, $category_check_query);
 
-    if ($update_query_run) {
-        $_SESSION['status'] = "Data updated successfully !";
-        header('Location: product.php');
-        exit;
+    if (mysqli_num_rows($category_check_result) > 0) {
+        // If category exists, proceed with the update
+        $update_query = "UPDATE product 
+                         SET product_name='$product_name', 
+                             product_des='$product_des', 
+                             categories_id='$category_id', 
+                             sellPrice='$sell_price' 
+                         WHERE product_id='$product_id'";
+
+        $update_query_run = mysqli_query($con, $update_query);
+
+        if ($update_query_run) {
+            $_SESSION['status'] = "Product updated successfully!";
+        } else {
+            $_SESSION['status'] = "Product update failed!";
+        }
     } else {
-        $_SESSION['status'] = "Data updation failed !";
-        header('Location: product.php');
-        exit;
+        // Category doesn't exist
+        $_SESSION['status'] = "Invalid category. Please select a valid category.";
     }
+
+    // Redirect back to the product page
+    header("Location: product.php");
+    exit;
 }
 //update data end
 
 
+//Delete data start
 
-//Delete Data start
 if (isset($_POST['click_delete_btn'])) {
     $id = $_POST['user_id'];
 
-    $delete_query = "DELETE FROM product WHERE product_id='$id'";
-    $delete_query_run = mysqli_query($con, $delete_query);
+    // Check for related rows in sales_items and order_items tables
+    $check_sales_items_query = "SELECT * FROM sales_items WHERE product_id='$id'";
+    $check_sales_items_result = mysqli_query($con, $check_sales_items_query);
 
-    if ($delete_query_run) {
-        $_SESSION['status'] = "Data deleted successfully!";
-        header("Location: product.php"); // Redirect to the same page after deletion
-        exit;
+    $check_order_items_query = "SELECT * FROM order_items WHERE product_id='$id'";
+    $check_order_items_result = mysqli_query($con, $check_order_items_query);
+
+    // If there are related rows, show confirmation popup
+    if (mysqli_num_rows($check_sales_items_result) > 0 || mysqli_num_rows($check_order_items_result) > 0) {
+        echo "<script>
+            if (confirm('There are related records in sales_items or order_items. Do you still want to delete this product?')) {
+                window.location.href = 'product.php?confirm_delete=1&product_id=$id';
+            } else {
+                window.location.href = 'product.php';
+            }
+        </script>";
     } else {
-        $_SESSION['status'] = "Data deletion failed!";
+        // If no related rows, proceed with deletion
+        $delete_sales_items_query = "DELETE FROM sales_items WHERE product_id='$id'";
+        mysqli_query($con, $delete_sales_items_query);
+
+        $delete_order_items_query = "DELETE FROM order_items WHERE product_id='$id'";
+        mysqli_query($con, $delete_order_items_query);
+
+        $delete_product_query = "DELETE FROM product WHERE product_id='$id'";
+        $delete_product_query_run = mysqli_query($con, $delete_product_query);
+
+        if ($delete_product_query_run) {
+            $_SESSION['status'] = "Data deleted successfully!";
+        } else {
+            $_SESSION['status'] = "Data deletion failed!";
+        }
+
         header("Location: product.php");
         exit;
     }
 }
+
+// Handle confirmation from the popup
+if (isset($_GET['confirm_delete']) && $_GET['confirm_delete'] == 1) {
+    $id = $_GET['product_id'];
+
+    // Delete related rows in sales_items and order_items
+    $delete_sales_items_query = "DELETE FROM sales_items WHERE product_id='$id'";
+    mysqli_query($con, $delete_sales_items_query);
+
+    $delete_order_items_query = "DELETE FROM order_items WHERE product_id='$id'";
+    mysqli_query($con, $delete_order_items_query);
+
+    // Now delete the product
+    $delete_product_query = "DELETE FROM product WHERE product_id='$id'";
+    $delete_product_query_run = mysqli_query($con, $delete_product_query);
+
+    if ($delete_product_query_run) {
+        $_SESSION['status'] = "Data deleted successfully!";
+    } else {
+        $_SESSION['status'] = "Data deletion failed!";
+    }
+
+    header("Location: product.php");
+    exit;
+}
+
+
+
 
 //Delete Data end
 
