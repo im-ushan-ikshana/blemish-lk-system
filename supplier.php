@@ -250,6 +250,7 @@ include('includes/navbar.php');
 </div>
 <!-- Edit Modal End -->
 
+<!-- Edit Middle Part start-->
 <div class="container-fluid mt-5">
     <div class="card mt-4">
         <div class="card-header">
@@ -319,6 +320,7 @@ include('includes/navbar.php');
         </div>
     </div>
 </div>
+<!-- Edit Middle Part End-->
 
 <?php
 include('includes/footer.php');

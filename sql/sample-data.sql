@@ -2,7 +2,7 @@ USE blemish_inventory;
 
 -- Insert Sample Users
 INSERT INTO users (username, password, role) VALUES
-('admin', SHA2('adminpassword', 256), 'admin'),
+('admin', SHA2('admin123', 256), 'admin'),
 ('user1', SHA2('user1password', 256), 'user');
 
 -- Insert Sample Permissions
