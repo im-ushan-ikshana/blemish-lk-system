@@ -39,17 +39,22 @@ if (isset($_POST['save_supp_data'])) {
         $_SESSION['status'] = implode("<br>", $errors);
     } else {
         // Check if username is unique
-        $check_username_query = "SELECT * FROM users WHERE username='$username'";
-        $check_username_run = mysqli_query($con, $check_username_query);
-
+        $check_username_query = "SELECT * FROM users WHERE username=?";
+        $stmt = mysqli_prepare($con, $check_username_query);
+        mysqli_stmt_bind_param($stmt, "s", $username);
+        mysqli_stmt_execute($stmt);
+        $check_username_run = mysqli_stmt_get_result($stmt);
+    
         if (mysqli_num_rows($check_username_run) > 0) {
             $_SESSION['status'] = "Username already exists!";
         } else {
             // If all validations pass, insert the new user
             $hashed_pass = hash('sha256', $pass); // Hash the password using SHA-256
-            $insert_query = "INSERT INTO users(username, password, role) VALUES ('$username', '$hashed_pass', '$role')";
-            $insert_query_run = mysqli_query($con, $insert_query);
-
+            $insert_query = "INSERT INTO users(username, password, role) VALUES (?, ?, ?)";
+            $stmt = mysqli_prepare($con, $insert_query);
+            mysqli_stmt_bind_param($stmt, "sss", $username, $hashed_pass, $role);
+            $insert_query_run = mysqli_stmt_execute($stmt);
+    
             if ($insert_query_run) {
                 $_SESSION['status'] = "Data inserted successfully!";
             } else {
