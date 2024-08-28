@@ -43,9 +43,9 @@ if (isset($_POST['save_supp_data'])) {
         $stmt = mysqli_prepare($con, $check_username_query);
         mysqli_stmt_bind_param($stmt, "s", $username);
         mysqli_stmt_execute($stmt);
-        $check_username_run = mysqli_stmt_get_result($stmt);
+        $result = mysqli_stmt_get_result($stmt);
     
-        if (mysqli_num_rows($check_username_run) > 0) {
+        if (mysqli_num_rows($result) > 0) {
             $_SESSION['status'] = "Username already exists!";
         } else {
             // If all validations pass, insert the new user
@@ -62,6 +62,7 @@ if (isset($_POST['save_supp_data'])) {
             }
         }
     }
+    
 
     // Redirect to avoid form resubmission
     header('Location: ' . $_SERVER['PHP_SELF']);
@@ -76,8 +77,11 @@ if (isset($_POST['click_view_btn'])) {
     $user_id = $_POST['user_id'];
 
     // Fetch user data based on $user_id from the database
-    $query = "SELECT * FROM users WHERE user_id = '$user_id'";
-    $query_run = mysqli_query($con, $query);
+    $query = "SELECT * FROM users WHERE user_id = ?";
+    $stmt = mysqli_prepare($con, $query);
+    mysqli_stmt_bind_param($stmt, "i", $user_id);
+    mysqli_stmt_execute($stmt);
+    $query_run = mysqli_stmt_get_result($stmt);
 
     if (mysqli_num_rows($query_run) > 0) {
         $user_data = mysqli_fetch_assoc($query_run);
@@ -90,6 +94,7 @@ if (isset($_POST['click_view_btn'])) {
     }
     exit; // Stop further execution since this is an AJAX request
 }
+
 // view data end
 
 // Edit data start
@@ -98,21 +103,25 @@ if (isset($_POST['click_edit_btn'])) {
     $id = $_POST['user_id'];
     $arrayresult = [];
 
-    // echo $id;
-    $fetch_query = "SELECT * FROM users WHERE user_id='$id'";
-    $fetch_query_run = mysqli_query($con, $fetch_query);
+    // Prepare and execute the query to fetch user data based on $id
+    $fetch_query = "SELECT * FROM users WHERE user_id = ?";
+    $stmt = mysqli_prepare($con, $fetch_query);
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $fetch_query_run = mysqli_stmt_get_result($stmt);
 
     if (mysqli_num_rows($fetch_query_run) > 0) {
         while ($row = mysqli_fetch_array($fetch_query_run)) {
             array_push($arrayresult, $row);
-            header('content-type: application/json');
-            echo json_encode($arrayresult);
-            exit;
         }
+        header('Content-Type: application/json');
+        echo json_encode($arrayresult);
+        exit;
     } else {
         echo '<h4>No record found</h4>';
     }
 }
+
 // Edit data end
 
 
@@ -124,6 +133,7 @@ if (isset($_POST['update_data'])) {
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
     $role = $_POST['role'];
+    $errors = [];
 
     if ($password !== $confirm_password) {
         $errors[] = "Password and Confirm Password do not match!";
@@ -134,20 +144,23 @@ if (isset($_POST['update_data'])) {
         $_SESSION['status'] = implode("<br>", $errors);
     } else {
         $hashed_pass = hash('sha256', $password);
-        $update_query = "UPDATE users SET username='$user_name', password = '$hashed_pass', role = '$role'  WHERE user_id='$id'";
-        $update_query_run = mysqli_query($con, $update_query);
+        $update_query = "UPDATE users SET username = ?, password = ?, role = ? WHERE user_id = ?";
+        $stmt = mysqli_prepare($con, $update_query);
+        mysqli_stmt_bind_param($stmt, "sssi", $user_name, $hashed_pass, $role, $id);
+        $update_query_run = mysqli_stmt_execute($stmt);
     }
 
     if ($update_query_run) {
-        $_SESSION['status'] = "Data updated successfully !";
+        $_SESSION['status'] = "Data updated successfully!";
         header('Location: users.php');
         exit;
     } else {
-        $_SESSION['status'] = "Data updation failed !";
+        $_SESSION['status'] = "Data updation failed!";
         header('Location: users.php');
         exit;
     }
 }
+
 //update data end
 
 
@@ -155,20 +168,28 @@ if (isset($_POST['update_data'])) {
 //Read Data start
 if (isset($_POST['click_delete_btn'])) {
     $id = $_POST['user_id'];
-    $delete_permissions_query = "DELETE FROM permissions WHERE user_id='$id'";
-    $delete_query_run_permissions = mysqli_query($con, $delete_permissions_query);
 
-    $delete_query = "DELETE FROM users WHERE user_id='$id'";
-    $delete_query_run_users = mysqli_query($con, $delete_query);
+    // Prepare and execute the query to delete from the permissions table
+    $delete_permissions_query = "DELETE FROM permissions WHERE user_id = ?";
+    $stmt_permissions = mysqli_prepare($con, $delete_permissions_query);
+    mysqli_stmt_bind_param($stmt_permissions, "i", $id);
+    $delete_query_run_permissions = mysqli_stmt_execute($stmt_permissions);
+
+    // Prepare and execute the query to delete from the users table
+    $delete_query = "DELETE FROM users WHERE user_id = ?";
+    $stmt_users = mysqli_prepare($con, $delete_query);
+    mysqli_stmt_bind_param($stmt_users, "i", $id);
+    $delete_query_run_users = mysqli_stmt_execute($stmt_users);
 
     if ($delete_query_run_permissions && $delete_query_run_users) {
-        $_SESSION['status'] = "Data deleted successfully !";
+        $_SESSION['status'] = "Data deleted successfully!";
         exit;
     } else {
-        $_SESSION['status'] = "Data deletion failed !";
+        $_SESSION['status'] = "Data deletion failed!";
         exit;
     }
 }
+
 //Read Data end
 
 /* code.php FILE End */
