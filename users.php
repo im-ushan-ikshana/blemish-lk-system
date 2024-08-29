@@ -165,7 +165,7 @@ if (isset($_POST['update_data'])) {
 
 
 
-//Read Data start
+//Delete Data start
 if (isset($_POST['click_delete_btn'])) {
     $id = $_POST['user_id'];
 
@@ -190,7 +190,7 @@ if (isset($_POST['click_delete_btn'])) {
     }
 }
 
-//Read Data end
+//Delete Data end
 
 /* code.php FILE End */
 
@@ -205,7 +205,7 @@ include('includes/navbar.php');
 ?>
 
 
-
+ 
 
 
 <style>
