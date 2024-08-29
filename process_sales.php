@@ -35,8 +35,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $total_price = $quantity * $price;
 
                     $items_query = "INSERT INTO sales_items (sales_id, product_id, quantity, price, total_price) VALUES ('$sales_id', '$product_id', '$quantity', '$price', '$total_price')";
+                    $inventory_query = "UPDATE inventory SET quantity_in_stock = quantity_in_stock - '$quantity' WHERE product_id = '$product_id'";
                     if (!mysqli_query($con, $items_query)) {
                         throw new Exception("Sales items insertion failed: " . mysqli_error($con));
+                    }
+                    if (!mysqli_query($con, $inventory_query)) {
+                        throw new Exception("Inventory update failed: " . mysqli_error($con));
                     }
                 }
             } else {

@@ -1,6 +1,6 @@
 <?php
-session_start();
 include_once('./dbcon.php');
+include_once('./access.php');
 
 // view order
 if (isset($_POST['view_order'])) {
