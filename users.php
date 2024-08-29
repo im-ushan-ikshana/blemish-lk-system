@@ -138,6 +138,23 @@ if (isset($_POST['update_data'])) {
     if ($password !== $confirm_password) {
         $errors[] = "Password and Confirm Password do not match!";
     }
+    if (strlen($pass) < 8) {
+        $errors[] = "Password must be at least 8 characters long!";
+    }
+    if (!preg_match("/[A-Z]/", $pass)) {
+        $errors[] = "Password must include at least one uppercase letter!";
+    }
+    if (!preg_match("/[a-z]/", $pass)) {
+        $errors[] = "Password must include at least one lowercase letter!";
+    }
+    if (!preg_match("/[0-9]/", $pass)) {
+        $errors[] = "Password must include at least one number!";
+    }
+    if (!preg_match("/[\W]/", $pass)) {
+        $errors[] = "Password must include at least one special character!";
+    }
+
+
 
     // If there are errors, set them in the session
     if (!empty($errors)) {
