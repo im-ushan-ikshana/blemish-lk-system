@@ -1,6 +1,6 @@
 <?php
 // Start the session if needed
-session_start();
+
 include_once('./dbcon.php');
 
 // Function to get products as JSON
@@ -86,6 +86,7 @@ if (isset($_POST['click_view_btn']) && isset($_POST['order_id'])) {
 <?php
 include_once('./includes/header.php');
 include_once('./includes/navbar.php');
+include_once('./access.php');
 ?>
 
 <!-- Page Content -->
