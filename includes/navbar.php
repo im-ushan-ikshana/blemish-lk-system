@@ -83,6 +83,7 @@
            <h6 class="collapse-header">Admin Controls:</h6>
            <a class="collapse-item" href="category.php">Product Category</a>
            <a class="collapse-item" href="users.php">Manage Users</a>
+           <a class="collapse-item" href="orders.php">Manage Orders</a>
          </div>
        </div>
      </li>

@@ -241,7 +241,7 @@ include('includes/navbar.php');
                 <div class="modal-body">
                     <div class="form-group mb-3">
                         <label for="productname">Product Name</label>
-                        <input type="text" class="form-control" name="productname" placeholder="Enter product name">
+                        <input type="text" class="form-control" name="productname" placeholder="Enter product name" required>
                     </div>
 
                     <div class="form-group">
@@ -283,7 +283,7 @@ include('includes/navbar.php');
 
                     <div class="form-group">
                         <label for="productprice">Sell Price</label>
-                        <input type="number" class="form-control" name="productprice" placeholder="Selling price">
+                        <input type="number" class="form-control" name="productprice" placeholder="Selling price" required>
                     </div>
 
                 </div>
@@ -340,13 +340,13 @@ include('includes/navbar.php');
 
                     <div class="form-group mb-3">
                         <label for="name">Product Name</label>
-                        <input type="text" class="form-control" id="product_name" name="productname" placeholder="enter name">
+                        <input type="text" class="form-control" id="product_name" name="productname" placeholder="enter name" required>
                     </div>
                     <!-- id use for jquery, name use for php -->
 
                     <div class="form-group">
                         <label for="email">Product Description</label>
-                        <input type="text" class="form-control" id="product_des" name="productdes" placeholder="enter email">
+                        <input type="text" class="form-control" id="product_des" name="productdes" placeholder="enter email" required>
                     </div>
 
                     <!-- <div class="form-group">
@@ -377,7 +377,7 @@ include('includes/navbar.php');
 
                     <div class="form-group">
                         <label for="address">Sell Price</label>
-                        <input type="text" class="form-control" id="sell_price" name="sellprice" placeholder="enter address">
+                        <input type="text" class="form-control" id="sell_price" name="sellprice" placeholder="enter Sell price" required>
                     </div>
 
                 </div>
@@ -427,7 +427,7 @@ include('includes/navbar.php');
             ?>
 
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <strong>Hey !</strong> <?php echo $_SESSION['status']; ?>
+                    <strong>Alert !</strong> <?php echo $_SESSION['status']; ?>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

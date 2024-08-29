@@ -15,9 +15,9 @@ if (isset($_POST['save_supp_data'])) {
     $insert_query_run = mysqli_query($con, $insert_query);
 
     if ($insert_query_run) {
-        $_SESSION['status'] = "Data inserted successfully!";
+        $_SESSION['status2'] = "Data inserted successfully!";
     } else {
-        $_SESSION['status'] = "Insertion of data failed!";
+        $_SESSION['status2'] = "Insertion of data failed!";
     }
 
     // Redirect to avoid form resubmission
@@ -245,22 +245,22 @@ include('includes/navbar.php');
 
                     <div class="form-group mb-3">
                         <label for="name">Supplier Name</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter name">
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter name" required >
                     </div>
 
                     <div class="form-group">
                         <label for="email">Supplier Email</label>
-                        <input type="text" class="form-control" id="email" name="email" placeholder="Enter email">
+                        <input type="text" class="form-control" id="email" name="email" placeholder="Enter email" required>
                     </div>
 
                     <div class="form-group">
                         <label for="phone">Supplier Contact No</label>
-                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter number">
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter phone number" required>
                     </div>
 
                     <div class="form-group">
                         <label for="address">Supplier Address</label>
-                        <input type="text" class="form-control" id="address" name="address" placeholder="Enter address">
+                        <input type="text" class="form-control" id="address" name="address" placeholder="Enter address" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -275,6 +275,25 @@ include('includes/navbar.php');
 
 <div class="container-fluid mt-5">
     <div class="card mt-4">
+        <!-- Success messge show start -->
+        <?php
+            if (isset($_SESSION['status2']) && $_SESSION['status2'] != '') {
+
+            ?>
+
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Alert !</strong> <?php echo $_SESSION['status2']; ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+            <?php
+                unset($_SESSION['status2']);
+            }
+            ?>
+            <!-- Success messge show end -->
+
         <div class="card-header">
             <h4 class="text-dark fw-bold">MANAGE SUPPLIERS</h4>
             <button type="button" class="btn btn-primary float-right d-sm-block col-sm-auto col-12 p-2" data-toggle="modal" data-target="#insertdata">
