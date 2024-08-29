@@ -50,22 +50,21 @@ if (isset($_POST['click_view_btn'])) {
 // Edit data start
 if (isset($_POST['click_edit_btn'])) {
     $id = $_POST['user_id'];
-    $arrayresult = [];
 
+    // Query to fetch the data for the supplier with the given id
     $fetch_query = "SELECT * FROM supplier WHERE id='$id'";
     $fetch_query_run = mysqli_query($con, $fetch_query);
 
     if (mysqli_num_rows($fetch_query_run) > 0) {
-        while ($row = mysqli_fetch_array($fetch_query_run)) {
-            array_push($arrayresult, $row);
-            header('content-type: application/json');
-            echo json_encode($arrayresult);
-            exit;
-        }
+        $row = mysqli_fetch_assoc($fetch_query_run);  // Fetch a single row
+        header('Content-Type: application/json');
+        echo json_encode($row);  // Directly return the row as a JSON object
+        exit;
     } else {
-        echo '<h4>No record found</h4>';
+        echo json_encode(['error' => 'No record found']);
     }
 }
+
 // Edit data end
 
 // Update data start
@@ -150,26 +149,26 @@ include('includes/navbar.php');
                 </button>
             </div>
 
-            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+            <form id="supplierForm" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" onsubmit="return validateForm()">
                 <div class="modal-body">
                     <div class="form-group mb-3">
                         <label for="name">Supplier Name</label>
-                        <input type="text" class="form-control" name="name" placeholder="Enter name">
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter name" required>
                     </div>
 
                     <div class="form-group">
                         <label for="email">Supplier Email</label>
-                        <input type="email" class="form-control" name="email" placeholder="Enter email">
+                        <input type="email" class="form-control" name="email" placeholder="Enter email" required>
                     </div>
 
                     <div class="form-group">
                         <label for="phone">Supplier Contact No</label>
-                        <input type="number" class="form-control" name="phone" placeholder="Enter number">
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter number" required>
                     </div>
 
                     <div class="form-group">
                         <label for="address">Supplier Address</label>
-                        <input type="text" class="form-control" name="address" placeholder="Enter address">
+                        <input type="text" class="form-control" name="address" placeholder="Enter address" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -181,6 +180,30 @@ include('includes/navbar.php');
     </div>
 </div>
 <!-- Insert Modal End -->
+
+ <!-- Insert model validations -->
+  <!-- JavaScript Validation -->
+<script>
+    function validateForm() {
+        // Name Validation
+        var name = document.getElementById('name').value;
+        var nameRegex = /^[A-Za-z\s]+$/;
+        if (!nameRegex.test(name)) {
+            alert("Name should contain only letters.");
+            return false;
+        }
+
+        // Phone Number Validation
+        var phone = document.getElementById('phone').value;
+        var phoneRegex = /^0\d{9}$/;
+        if (!phoneRegex.test(phone)) {
+            alert("Phone number must be 10 digits and start with '0'.");
+            return false;
+        }
+
+        return true;
+    }
+</script>
 
 <!-- View Modal Start -->
 <div class="modal fade" id="viewuser" tabindex="-1" role="dialog" aria-labelledby="viewuserLabel" aria-hidden="true">
@@ -250,7 +273,6 @@ include('includes/navbar.php');
 </div>
 <!-- Edit Modal End -->
 
-<!-- Edit Middle Part start-->
 <div class="container-fluid mt-5">
     <div class="card mt-4">
         <div class="card-header">
@@ -320,7 +342,6 @@ include('includes/navbar.php');
         </div>
     </div>
 </div>
-<!-- Edit Middle Part End-->
 
 <?php
 include('includes/footer.php');
@@ -365,20 +386,26 @@ include('includes/scripts.php');
                     'user_id': user_id,
                 },
                 success: function(response) {
-                    $.each(response, function(key, value) {
-                        $('#supplier_id').val(value['id']);
-                        $('#name').val(value['name']);
-                        $('#email').val(value['email']);
-                        $('#phone').val(value['phone']);
-                        $('#address').val(value['address']);
-                    });
+                    // Check if there's an error
+                    if (response.error) {
+                        alert(response.error);
+                    } else {
+                        // Populate modal inputs with the fetched data
+                        $('#supplier_id').val(response.id);
+                        $('#name').val(response.name);
+                        $('#email').val(response.email);
+                        $('#phone').val(response.phone);
+                        $('#address').val(response.address);
 
-                    $('#editdata').modal('show');
+                        // Show the modal
+                        $('#editdata').modal('show');
+                    }
                 }
             });
         });
     });
 </script>
+
 
 <!-- Delete Script -->
 <script>

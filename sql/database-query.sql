@@ -42,6 +42,7 @@ CREATE TABLE product (
     sellPrice VARCHAR(255) NOT NULL,
     FOREIGN KEY (categories_id) REFERENCES categories(categories_id) ON DELETE CASCADE
 );
+
 -- Inventory Table
 CREATE TABLE inventory (
     inventory_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -49,6 +50,8 @@ CREATE TABLE inventory (
     product_name VARCHAR(255) NOT NULL,    
     quantity_in_stock INT NOT NULL,
     FOREIGN KEY (product_id) REFERENCES product(product_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 -- Orders Table (Modified with 'supplier_id' column)
