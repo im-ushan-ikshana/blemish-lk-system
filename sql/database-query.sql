@@ -60,7 +60,7 @@ CREATE TABLE orders (
     order_date DATE NOT NULL,
     total_amount DECIMAL(10, 2) NOT NULL,
     supplier_id INT,
-    FOREIGN KEY (supplier_id) REFERENCES supplier(id)
+    FOREIGN KEY (supplier_id) REFERENCES supplier(id) ON DELETE CASCADE ON UPDATE CASCADE,
 );
 
 -- Order Items Table
@@ -71,7 +71,7 @@ CREATE TABLE order_items (
     quantity INT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     total_price DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
 
